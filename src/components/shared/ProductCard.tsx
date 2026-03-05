@@ -1,6 +1,8 @@
 import { ShoppingCart, Heart, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-const ProductCard = ({ product }) => (
+const ProductCard = ({ product }: { product: any }) => (
+  <Link to={'/en/product/:1'}>
   <div className="group bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-gray-50 transition-all hover:shadow-2xl">
     <div className="relative aspect-square overflow-hidden bg-gray-50">
       {product.tag && (
@@ -31,7 +33,7 @@ const ProductCard = ({ product }) => (
         </button>
       </div>
     </div>
-  </div>
+  </div></Link>
 );
 
 export default ProductCard;

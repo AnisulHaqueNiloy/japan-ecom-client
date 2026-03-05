@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Search,  ShoppingCart, User, ChevronDown, Menu, X, ChevronRight } from 'lucide-react';
 import { Input } from "@/components/ui/input";
 import {
@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 // আপনার দেওয়া JSON ডাটা
 const categoryData = [
@@ -22,6 +22,7 @@ const categoryData = [
 ];
 
 const Navbar = () => {
+  // @ts-ignore
   const [isLoggedIn, setIsLoggedIn] = useState(true); 
   const [isCatExpanded, setIsCatExpanded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -92,10 +93,11 @@ const Navbar = () => {
           <div className="flex items-center gap-3 md:gap-5">
            
             
+            <Link to={'/en/cart'}>
             <div className="relative cursor-pointer group">
               <ShoppingCart className="w-6 h-6 text-[#4A5568] group-hover:text-[#1F5E3B]" />
               <span className="absolute -top-2 -right-2 bg-[#1F5E3B] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">2</span>
-            </div>
+            </div></Link>
 
             {/* Profile / Register Logic */}
             <div className="border-l hidden md:block pl-3 md:pl-5 ml-1 flex items-center">

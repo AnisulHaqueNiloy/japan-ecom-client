@@ -1,10 +1,18 @@
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 
-const SidebarFilter = ({ categories, selectedCategory, setSelectedCategory, priceRange, setPriceRange }) => {
+interface SidebarFilterProps {
+  categories: Array<{ id: string | number; name: string }>;
+  selectedCategory: string;
+  setSelectedCategory: (category: string) => void;
+  priceRange: [number, number];
+  setPriceRange: (range: [number, number]) => void;
+}
+
+const SidebarFilter = ({ categories, selectedCategory, setSelectedCategory, priceRange, setPriceRange }: SidebarFilterProps) => {
   return (
     <div className="space-y-10">
-      {/* ক্যাটেগরি সিলেকশন লজিক */}
+      {/* ক্যাটেগরি সিলেকশন */}
       <div>
         <h3 className="font-bold text-[#1A2E1A] mb-4 text-sm uppercase tracking-wider">Categories</h3>
         <div className="space-y-1">
@@ -26,7 +34,7 @@ const SidebarFilter = ({ categories, selectedCategory, setSelectedCategory, pric
         </div>
       </div>
 
-      {/* প্রাইস ফিল্টার লজিক */}
+      {/* প্রাইস ফিল্টার */}
       <div className="bg-[#F1F5F1] p-6 rounded-[2rem]">
         <h3 className="font-bold text-[#1A2E1A] mb-6">Price Range</h3>
         <Slider 
@@ -34,13 +42,16 @@ const SidebarFilter = ({ categories, selectedCategory, setSelectedCategory, pric
           min={0} 
           max={15000} 
           step={100} 
-          onValueChange={(val) => setPriceRange(val)} 
-          className="mb-6 bg-[#1F5E3B]" 
+          // এখানে Type Casting (as [number, number]) ব্যবহার করে সমাধান করা হয়েছে
+          onValueChange={(val) => setPriceRange(val as [number, number])} 
+          className="mb-6" 
         />
         <div className="flex justify-between text-[10px] font-black text-gray-400 uppercase">
           <span>¥{priceRange[0]}</span> <span>¥{priceRange[1]}</span>
         </div>
-        <Button className="w-full bg-[#1F5E3B] hover:bg-[#1F5E3B] cursor-pointer text-white rounded-xl font-bold h-12 mt-6">Apply Filter</Button>
+        <Button className="w-full bg-[#1F5E3B] hover:bg-[#16432a] text-white rounded-xl font-bold h-12 mt-6 transition-colors">
+          Apply Filter
+        </Button>
       </div>
     </div>
   );

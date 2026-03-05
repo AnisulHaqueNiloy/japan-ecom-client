@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import  { useState, useMemo } from 'react';
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, PaginationEllipsis } from "@/components/ui/pagination";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious,  } from "@/components/ui/pagination";
 import SidebarFilter from './components/SidebarFilter';
 import ProductCard from '@/components/shared/ProductCard';
 
@@ -31,7 +31,7 @@ const allProducts = Array.from({ length: 20 }).map((_, i) => ({
 const AllProduct  = () => {
   // States for Filtering
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [priceRange, setPriceRange] = useState([0, 15000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 15000]);
   const [sortBy, setSortBy] = useState("newest");
 
   // Filtering Logic (এটি API কানেক্ট করলে অনেক কাজে দেবে)

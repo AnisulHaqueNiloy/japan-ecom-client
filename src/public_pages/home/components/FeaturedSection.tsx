@@ -1,12 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/dist/ScrollTrigger';
 import { ShoppingCart, ChevronRight, CheckCircle, Truck, ShieldCheck, Headphones } from 'lucide-react';
-import { Button } from "@/components/ui/button";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// ডাটা স্ট্রাকচার: ক্যাটাগরি অনুযায়ী প্রোডাক্টস
+// ডাটা স্ট্রাকচার
 const fullData = [
   {
     categoryId: 1,
@@ -17,6 +16,7 @@ const fullData = [
       { id: 102, name: "Garam Masala Premium Blend", price: "¥1,200", category: "BLENDS", image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=400" },
       { id: 103, name: "Kashmiri Chili Powder", price: "¥780", category: "SPICES", image: "https://images.unsplash.com/photo-1599490659213-e2b9527bb087?q=80&w=400" },
       { id: 104, name: "Premium Cardamom Pods", price: "¥1,550", category: "WHOLE SPICES", image: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=400" },
+      { id: 105, name: "Premium Cardamom Pods", price: "¥1,550", category: "WHOLE SPICES", image: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=400" },
     ]
   },
   {
@@ -28,6 +28,7 @@ const fullData = [
       { id: 202, name: "Spicy Chanachur Mix", price: "¥450", category: "SNACKS", image: "https://images.unsplash.com/photo-1605666807844-78fbad023bc3?q=80&w=400" },
       { id: 203, name: "Butter Cookies", price: "¥600", category: "BISCUITS", image: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?q=80&w=400" },
       { id: 204, name: "Peanut Bar", price: "¥200", category: "SNACKS", image: "https://images.unsplash.com/photo-1534119428213-fc4751762cc3?q=80&w=400" },
+      { id: 205, name: "Peanut Bar", price: "¥200", category: "SNACKS", image: "https://images.unsplash.com/photo-1534119428213-fc4751762cc3?q=80&w=400" },
     ]
   },
   {
@@ -39,17 +40,21 @@ const fullData = [
       { id: 302, name: "Red Lentils (Masoor Dal)", price: "¥900", category: "PULSES", image: "https://images.unsplash.com/photo-1585996853877-ad9aa5d3362d?q=80&w=400" },
       { id: 303, name: "Iodized Table Salt", price: "¥150", category: "ESSENTIALS", image: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?q=80&w=400" },
       { id: 304, name: "Sugar 1kg", price: "¥350", category: "ESSENTIALS", image: "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?q=80&w=400" },
+      { id: 305, name: "Sugar 1kg", price: "¥350", category: "ESSENTIALS", image: "https://images.unsplash.com/photo-1581441363689-1f3c3c414635?q=80&w=400" },
     ]
   }
 ];
 
 const FeaturedSections = () => {
-  const categorySliderRef = useRef(null);
+  const categorySliderRef = useRef<HTMLDivElement | null>(null);
   const catCardsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     // GSAP Animation for Category Icons
-    gsap.fromTo(catCardsRef.current, 
+    // Filter out nulls to ensure stability
+    const validCards = catCardsRef.current.filter(el => el !== null);
+
+    gsap.fromTo(validCards, 
       { x: 200, opacity: 0 },
       { 
         x: 0, 
@@ -66,13 +71,17 @@ const FeaturedSections = () => {
         }
       }
     );
+
+    return () => {
+      ScrollTrigger.getAll().forEach(t => t.kill());
+    };
   }, []);
 
   return (
-    <div className="bg-[#fcfcfc] py-16 space-y-24 overflow-hidden">
+    <div className="bg-[#fcfcfc] my-6 overflow-hidden">
       
       {/* ১. Trust Badges */}
-      <div className="container mx-auto px-6 md:px-14">
+      <div className="md:mx-14 mx-4 px-6 md:px-14">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
             { title: "Halal Certified", desc: "100% Sharia Compliant", icon: <CheckCircle className="text-[#1F5E3B]" /> },
@@ -92,19 +101,19 @@ const FeaturedSections = () => {
       </div>
 
       {/* ২. Category Navigation (GSAP Slide) */}
-      <div ref={categorySliderRef} className="container mx-auto px-6 md:px-14">
-        <div className="flex justify-between items-end mb-10">
-          <div>
+      <div ref={categorySliderRef} className="my-4 px-4 md:px-14">
+        <div className="flex flex-col items-center justify-between ">
+          <div className='flex flex-col items-center justify-between'>
             <h2 className="text-3xl font-black text-[#1F5E3B] border-l-4 border-[#1F5E3B] pl-4">Shop by Category</h2>
             <p className="text-gray-500 mt-2">Find your favorite halal essentials quickly</p>
           </div>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+        {/* <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           {fullData.map((group, index) => (
             <div 
               key={group.categoryId} 
-              ref={(el) => (catCardsRef.current[index] = el)}
+              ref={(el) => { catCardsRef.current[index] = el; }} // Fixed: Added braces to return void
               className="group cursor-pointer flex flex-col items-center"
             >
               <div className="w-full aspect-square rounded-[2.5rem] overflow-hidden bg-white mb-4 shadow-sm transition-all duration-500 group-hover:shadow-2xl group-hover:-translate-y-2">
@@ -113,11 +122,11 @@ const FeaturedSections = () => {
               <h4 className="font-bold text-[#1A2E1A] text-[10px] md:text-xs uppercase tracking-[0.15em] text-center group-hover:text-[#1F5E3B] transition-colors">{group.categoryName}</h4>
             </div>
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* ৩. Dynamic Category-wise Product Sections */}
-      <div className="mr-4 ml-4 md:mr-14 md:ml-14 mx-auto px-6 md:px-14 space-y-20">
+      <div className="mx-4 md:mx-14  px-6   space-y-20">
         {fullData.map((catGroup) => (
           <div key={catGroup.categoryId} className="category-block">
             {/* Section Header */}
@@ -132,13 +141,13 @@ const FeaturedSections = () => {
             </div>
 
             {/* Product Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-8">
               {catGroup.products.map((product) => (
-                <div key={product.id} className="group bg-white rounded-[2rem] overflow-hidden shadow-sm border border-gray-50 transition-all hover:shadow-xl">
-                  <div className="relative aspect-[4/5] overflow-hidden">
-                    {product.tag && (
+                <div key={product.id} className="group bg-white rounded-[2rem] overflow-hidden shadow-sm border border-gray-100 transition-all hover:shadow-xl">
+                  <div className="relative aspect-square overflow-hidden bg-gray-50">
+                    {product.id === 201 && ( // Example tag logic
                       <span className="absolute top-4 left-4 bg-[#1F5E3B] text-white text-[10px] font-bold px-3 py-1 rounded-full z-10">
-                        {product.tag}
+                        HOT
                       </span>
                     )}
                     <img src={product.image} alt={product.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />

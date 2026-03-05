@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
@@ -57,9 +57,11 @@ const HeroSection = () => {
   useEffect(() => {
     const el = categoryContainerRef.current;
     
-    // কার্ডগুলো ডান দিক থেকে বামে স্লাইড হবে
+    // Filtering out null values from current refs
+    const validCards = cardsRef.current.filter(card => card !== null);
+
     gsap.fromTo(
-      cardsRef.current,
+      validCards,
       { 
         x: 100, 
         opacity: 0 
@@ -67,14 +69,14 @@ const HeroSection = () => {
       {
         x: 0,
         opacity: 1,
-        stagger: 0.1, // একটির পর একটি আসবে
+        stagger: 0.1,
         duration: 0.8,
         ease: "power2.out",
         scrollTrigger: {
           trigger: el,
-          start: "top 85%", // যখন সেকশনটি স্ক্রিনের ৮৫% এ আসবে
+          start: "top 85%",
           end: "top 30%",
-          scrub: 1, // স্ক্রলিং এর সাথে অ্যানিমেশন সিঙ্ক হবে (স্মুথ রিভার্স কাজ করবে)
+          scrub: 1,
           toggleActions: "play reverse play reverse",
         }
       }
@@ -149,7 +151,7 @@ const HeroSection = () => {
             {categoryData.map((cat, index) => (
               <div 
                 key={cat.id} 
-                ref={el => cardsRef.current[index] = el}
+                ref={(el) => { cardsRef.current[index] = el; }} // Fixed: Wrapped in braces to return void
                 className="group cursor-pointer flex flex-col items-center"
               >
                 <div className="w-full aspect-square rounded-[2rem] overflow-hidden bg-[#F1F5F1] mb-5 transition-all duration-500 group-hover:shadow-2xl group-hover:-translate-y-2">

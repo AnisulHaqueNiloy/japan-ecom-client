@@ -5,6 +5,14 @@ import SearchPage from "../public_pages/search/SearchPage";
 import AllProduct from "../public_pages/all_product/AllProduct";
 import ProductDetails from "../public_pages/product_details/ProductDetails";
 import CartPage from "../public_pages/cart/CartPage";
+import AdminLayout from "@/layouts/AdminLayout";
+import AdminOverview from "@/admin_pages/overview/AdminOverview";
+import AllOrders from "@/admin_pages/OrdersAdmin/AllOrders";
+import AddProduct from "@/admin_pages/AddProduct/AddProduct";
+import Addcategory from "@/admin_pages/addCategory/Addcategory";
+import Userinfo from "@/admin_pages/usersinfo/Userinfo";
+import Addbanner from "@/admin_pages/addBanners/Addbanner";
+import Addoffer from "@/admin_pages/offers/Addoffer";
 
 export const router = createBrowserRouter([
   {
@@ -31,8 +39,46 @@ export const router = createBrowserRouter([
         path: "cart",
         element: <CartPage />,
       },
+
+     
     ],
   },
+
+   {
+        path:'/admin',
+        element:<AdminLayout/>,
+        children:[
+          {
+            index:true,
+            element:<AdminOverview/>
+            
+          },
+          {
+            path:'orders',
+            element:<AllOrders/>
+          },
+          {
+            path:'add-product',
+            element:<AddProduct/>
+          },
+          {
+            path:'add-categories',
+            element:<Addcategory/>
+          },
+          {
+            path:'users',
+            element:<Userinfo/>
+          },
+          {
+            path:'banners',
+            element:<Addbanner/>
+          },
+          {
+            path:'offers',
+            element:<Addoffer/>
+          }
+        ]
+      },
   {
     path: "/",
     element: <Navigate to="/en" replace />,

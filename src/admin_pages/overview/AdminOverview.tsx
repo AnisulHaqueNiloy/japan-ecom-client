@@ -1,5 +1,5 @@
 import type { RootState } from '@/redux/store';
-import { Package, Clock, CheckCircle2, TrendingUp, ArrowRight, MoreHorizontal } from 'lucide-react';
+import { Package, Clock, CheckCircle2, TrendingUp, ArrowRight,  } from 'lucide-react';
 import { useSelector } from 'react-redux';
 
 import { useNavigate, useParams } from 'react-router-dom';

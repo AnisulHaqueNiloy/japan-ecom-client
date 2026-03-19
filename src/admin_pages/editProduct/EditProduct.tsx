@@ -11,7 +11,7 @@ import { toast } from "react-hot-toast";
 import { useGetCategoriesQuery } from "@/redux/features/admin/category";
 import { useCreateProductMutation } from "@/redux/features/admin/products";
 
-const AddProduct = () => {
+const EditProduct = () => {
   // 1. Initial State Definition
   const initialState = {
     title: "",
@@ -364,4 +364,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default EditProduct;

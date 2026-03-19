@@ -13,6 +13,8 @@ import Addcategory from "@/admin_pages/addCategory/Addcategory";
 import Userinfo from "@/admin_pages/usersinfo/Userinfo";
 import Addbanner from "@/admin_pages/addBanners/Addbanner";
 import Addoffer from "@/admin_pages/offers/Addoffer";
+import ProductList from "@/admin_pages/allProduct/AllProduct";
+import EditProduct from "@/admin_pages/editProduct/EditProduct";
 
 export const router = createBrowserRouter([
   {
@@ -39,46 +41,51 @@ export const router = createBrowserRouter([
         path: "cart",
         element: <CartPage />,
       },
-
-     
     ],
   },
 
-   {
-        path:'/admin',
-        element:<AdminLayout/>,
-        children:[
-          {
-            index:true,
-            element:<AdminOverview/>
-            
-          },
-          {
-            path:'orders',
-            element:<AllOrders/>
-          },
-          {
-            path:'add-product',
-            element:<AddProduct/>
-          },
-          {
-            path:'add-categories',
-            element:<Addcategory/>
-          },
-          {
-            path:'users',
-            element:<Userinfo/>
-          },
-          {
-            path:'banners',
-            element:<Addbanner/>
-          },
-          {
-            path:'offers',
-            element:<Addoffer/>
-          }
-        ]
+  {
+    path: "/admin",
+    element: <AdminLayout />,
+    children: [
+      {
+        index: true,
+        element: <AdminOverview />,
       },
+      {
+        path: "orders",
+        element: <AllOrders />,
+      },
+      {
+        path: "add-product",
+        element: <AddProduct />,
+      },
+      {
+        path: "edit-product/:id",
+        element: <EditProduct />,
+      },
+      {
+        path: "all-product",
+        element: <ProductList></ProductList>,
+      },
+      {
+        path: "add-categories",
+        element: <Addcategory />,
+      },
+      {
+        path: "users",
+        element: <Userinfo />,
+      },
+      {
+        path: "banners",
+        element: <Addbanner />,
+      },
+      {
+        path: "offers",
+        element: <Addoffer />,
+      },
+    ],
+  },
   {
     path: "/",
     element: <Navigate to="/en" replace />,

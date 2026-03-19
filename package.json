@@ -20,8 +20,11 @@
     "radix-ui": "^1.4.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hot-toast": "^2.6.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.13.1",
+    "sweetalert2": "^11.26.23",
+    "sweetalert2-react-content": "^5.1.2",
     "swiper": "^12.1.2",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.1"

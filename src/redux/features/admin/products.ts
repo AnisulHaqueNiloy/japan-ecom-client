@@ -55,7 +55,7 @@ export const productApi = baseApi.injectEndpoints({
 
     // Query returns a single IProduct
     getProductById: builder.query<IProduct, string>({
-      query: (id) => `/admin/products/${id}`,
+      query: (id) => `/products/${id}`,
       providesTags: ["Product"],
     }),
 
@@ -88,6 +88,16 @@ export const productApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Product"],
     }),
+
+    getProductDetails: builder.query<IProduct, string>({
+      query: (id) => ({
+        url: `/admin/products/${id}`, // Backend-er public route hole '/products/:id' hobe
+        method: "GET",
+      }),
+      providesTags: ["Product"],
+      // Response-er moddhe jodi 'data' object thake, seta transform kore nite paren
+      transformResponse: (response: any) => response?.data || response,
+    }),
   }),
 });
 
@@ -97,4 +107,5 @@ export const {
   useCreateProductMutation,
   useUpdateProductMutation,
   useDeleteProductMutation,
+  useGetProductDetailsQuery,
 } = productApi;

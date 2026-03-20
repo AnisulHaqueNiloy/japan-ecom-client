@@ -13,6 +13,7 @@ const ProductList = () => {
 
   // ✅ FIX: Casting as any[] to solve .map and .length errors
   const products = ((data as any)?.data as any[]) || [];
+  console.log(products);
   const totalCount = (data as any)?.meta.totalCount || 0;
   console.log(data);
 

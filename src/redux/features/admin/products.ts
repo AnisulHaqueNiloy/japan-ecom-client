@@ -98,6 +98,16 @@ export const productApi = baseApi.injectEndpoints({
       // Response-er moddhe jodi 'data' object thake, seta transform kore nite paren
       transformResponse: (response: any) => response?.data || response,
     }),
+
+    getProductBySlug: builder.query<IProduct, string>({
+      query: (slug) => ({
+        url: `/products/details/${slug}`, // Router-er sathe exact match
+        method: "GET",
+      }),
+      providesTags: ["Product"],
+      // Backend { success: true, data: {...} } pathachche, tai transform dorkar
+      transformResponse: (response: any) => response?.data || response,
+    }),
   }),
 });
 
@@ -107,5 +117,7 @@ export const {
   useCreateProductMutation,
   useUpdateProductMutation,
   useDeleteProductMutation,
+  useGetProductBySlugQuery,
+
   useGetProductDetailsQuery,
 } = productApi;

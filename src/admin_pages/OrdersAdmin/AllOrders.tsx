@@ -29,7 +29,8 @@ import {
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { useDeleteOrderMutation, useGetAllOrdersQuery, useUpdateOrderStatusMutation } from "@/redux/features/admin/adminOrderApi";
-
+import { Link } from "react-router-dom";
+const IMG_URL = import.meta.env.VITE_API_URL
 const AllOrders = () => {
   const {
     data: ordersData,
@@ -41,6 +42,7 @@ const AllOrders = () => {
   const [deleteOrder] = useDeleteOrderMutation();
 
   const orders = ordersData?.data || [];
+  console.log(orders)
 
   // Status Badge Colors
   const getStatusBadge = (status: string) => {
@@ -287,7 +289,8 @@ const AllOrders = () => {
                       <div className="h-px bg-gray-100 my-1" />
 
                       <DropdownMenuItem className="rounded-lg gap-2 cursor-pointer text-blue-600">
-                        <Eye size={14} /> View Details
+                        <Link to={`/admin/orders/${order._id}`}>
+                        <Eye size={14} /> View Details</Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => handleDelete(order._id)}

@@ -9,7 +9,11 @@ export const orderApi = baseApi.injectEndpoints({
         body: orderData,
       }),
     }),
+    getMyOrders: builder.query({
+  query: () => "/user/my-orders", // Backend path: app.use("/api/user") + router.get("/my-orders")
+  providesTags: ["Orders"],
+}),
   }),
 });
 
-export const { usePlaceOrderMutation } = orderApi;
+export const { usePlaceOrderMutation ,useGetMyOrdersQuery } = orderApi;

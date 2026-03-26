@@ -22,6 +22,7 @@ const AdminLayout = () => {
   const menuItems = [
     { icon: <LayoutDashboard size={20} />, label: "Overview", path: `/admin` },
     { icon: <ShoppingBag size={20} />, label: "Orders", path: `/admin/orders` },
+  
     {
       icon: <PlusCircle size={20} />,
       label: "Add Product",

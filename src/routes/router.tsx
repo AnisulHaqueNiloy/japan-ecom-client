@@ -17,6 +17,10 @@ import ProductList from "@/admin_pages/allProduct/AllProduct";
 import EditProduct from "@/admin_pages/editProduct/EditProduct";
 import LoginPage from "@/authPages/LoginPage";
 import RegisterPage from "@/authPages/RegisterPage";
+import OrderDetails from "@/admin_pages/OrdersAdmin/OrderDetails";
+import UserLayout from "@/layouts/UserLayout";
+import UserOrderList from "@/user_pages/UserOrderList";
+import ProfileSetting from "@/user_pages/ProfileSetting";
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +49,20 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path:'/user',
+    element:<UserLayout/>,
+    children:[
+      {
+        index:true,
+        element:<UserOrderList/>
+      },
+      {
+        path:'profile',
+        element:<ProfileSetting/>
+      }
+    ]
+  },
 
   {
     path: "/admin",
@@ -57,6 +75,10 @@ export const router = createBrowserRouter([
       {
         path: "orders",
         element: <AllOrders />,
+      },
+       {
+        path: "orders/:id",
+        element: <OrderDetails />,
       },
       {
         path: "add-product",

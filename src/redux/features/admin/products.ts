@@ -24,7 +24,7 @@ export interface IProduct {
     _id: string;
     name: string;
   };
-  stock: "available" | "out of stock";
+  stock?: "available" | "out of stock";
   stockQuantity?: number;
   bestSeller: boolean;
   purchaseCount: number;

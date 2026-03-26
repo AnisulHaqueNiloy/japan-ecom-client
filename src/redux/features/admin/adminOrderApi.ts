@@ -37,6 +37,16 @@ export const orderApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Orders"],
     }),
+
+    getOrderDetails: builder.query({
+      query: (id) => `/admin/order/${id}`,
+      providesTags: (_result, _error, id) => [{ type: "Orders", id }],
+    }),
+
+    getDashboardStats: builder.query({
+  query: () => "/admin/overview/summary", // Backend route: /api/admin/stats/summary
+  providesTags: ["Orders"],
+}),
   }),
 });
 
@@ -46,4 +56,6 @@ export const {
   useGetAllOrdersQuery,
   useUpdateOrderStatusMutation,
   useDeleteOrderMutation,
+  useGetOrderDetailsQuery,
+  useGetDashboardStatsQuery
 } = orderApi;

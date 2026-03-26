@@ -20,6 +20,7 @@ export const baseApi = createApi({
     "SubCategory", // Subcategory filters
     "Offer",
     "Orders",
+    "Users"
   ],
 
   endpoints: () => ({}),

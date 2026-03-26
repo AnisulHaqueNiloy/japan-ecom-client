@@ -21,6 +21,8 @@ const offerApi = baseApi.injectEndpoints({
 
       invalidatesTags: ["Offer"],
     }),
+
+    
   }),
 });
 

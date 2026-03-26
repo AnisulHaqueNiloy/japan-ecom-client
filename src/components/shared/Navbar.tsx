@@ -28,6 +28,9 @@ import { useGetCategoriesQuery } from "@/redux/features/admin/category";
 import { useGetMeQuery, useLogoutMutation } from "@/redux/features/authApi";
 import { useSelector } from "react-redux";
 
+// Base URL configuration (Ensure VITE_ prefix if using Vite)
+const IMG_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 const Navbar = () => {
   const [isCatExpanded, setIsCatExpanded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -35,21 +38,27 @@ const Navbar = () => {
 
   // 1. Auth Status & User Data Fetching
   const { data: user, isLoading: isUserLoading } = useGetMeQuery(undefined);
+
   const [logout] = useLogoutMutation();
   const isLoggedIn = !!user;
   const isAdmin = user?.role === "ADMIN";
+
+  // Helper function to handle image path
+  const getFullImageUrl = (path: string) => {
+    if (!path) return null;
+    return path.startsWith("http") ? path : `${IMG_URL}${path}`;
+  };
 
   // 2. Cart Count Calculation
   const cartState = useSelector((state: any) => state.cart);
   const items = cartState?.items || cartState?.cartItems || [];
   const totalCartCount = items.reduce(
     (total: number, item: any) => total + (item.quantity || 1),
-    0,
+    0
   );
 
   // 3. Categories Fetching
-  const { data: categories, isLoading: isCatLoading } =
-    useGetCategoriesQuery(undefined);
+  const { data: categories, isLoading: isCatLoading } = useGetCategoriesQuery(undefined);
 
   // Handle Logout
   const handleLogout = async () => {
@@ -133,25 +142,19 @@ const Navbar = () => {
         <div className="flex items-center gap-2 md:gap-6">
           <div className="hidden xl:flex items-center gap-6 text-[#4A5568] font-medium mr-4">
             <NavLink
-              className={({ isActive }) =>
-                isActive ? "text-[#1F5E3B] font-bold" : "hover:text-[#1F5E3B]"
-              }
+              className={({ isActive }) => (isActive ? "text-[#1F5E3B] font-bold" : "hover:text-[#1F5E3B]")}
               to="/"
             >
               Home
             </NavLink>
             <NavLink
-              className={({ isActive }) =>
-                isActive ? "text-[#1F5E3B] font-bold" : "hover:text-[#1F5E3B]"
-              }
+              className={({ isActive }) => (isActive ? "text-[#1F5E3B] font-bold" : "hover:text-[#1F5E3B]")}
               to="/all_products"
             >
               Shop All
             </NavLink>
             <NavLink
-              className={({ isActive }) =>
-                isActive ? "text-[#1F5E3B] font-bold" : "hover:text-[#1F5E3B]"
-              }
+              className={({ isActive }) => (isActive ? "text-[#1F5E3B] font-bold" : "hover:text-[#1F5E3B]")}
               to="/contact"
             >
               Contact
@@ -159,7 +162,6 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-3 md:gap-5">
-            {/* Logic: Cart only shows if NOT Admin */}
             {!isAdmin && (
               <Link to="/cart">
                 <div className="relative cursor-pointer group">
@@ -186,7 +188,7 @@ const Navbar = () => {
                       <div className="w-7 h-7 bg-[#1F5E3B] rounded-full flex items-center justify-center text-white overflow-hidden">
                         {user.image ? (
                           <img
-                            src={user.image}
+                            src={getFullImageUrl(user.image)!}
                             alt={user.name}
                             className="w-full h-full object-cover"
                           />
@@ -199,33 +201,24 @@ const Navbar = () => {
                       </span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="w-56 mt-2 p-2 rounded-2xl border-gray-100 shadow-xl"
-                  >
+                  <DropdownMenuContent align="end" className="w-56 mt-2 p-2 rounded-2xl border-gray-100 shadow-xl">
                     <div className="px-3 py-3">
-                      <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
-                        Signed in as
-                      </p>
-                      <p className="text-sm font-bold text-[#1A2E1A] truncate">
-                        {user.email}
-                      </p>
+                      <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Signed in as</p>
+                      <p className="text-sm font-bold text-[#1A2E1A] truncate">{user.email}</p>
                     </div>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                      onClick={() => navigate("/profile")}
-                      className="cursor-pointer py-3 rounded-xl gap-3"
-                    >
-                      <User size={18} className="text-gray-400" /> Profile
-                      Settings
-                    </DropdownMenuItem>
-                    {isAdmin && (
+                    
+                    {isAdmin ?(
                       <DropdownMenuItem
                         onClick={() => navigate("/admin")}
                         className="cursor-pointer py-3 rounded-xl gap-3 text-[#1F5E3B]"
                       >
                         <Settings size={18} /> Admin Dashboard
                       </DropdownMenuItem>
+                    ):(
+                      <DropdownMenuItem onClick={() => navigate("/user")} className="cursor-pointer py-3 rounded-xl gap-3">
+                      <User size={18} className="text-gray-400" /> Dashboard
+                    </DropdownMenuItem>
                     )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
@@ -239,10 +232,7 @@ const Navbar = () => {
               ) : (
                 <div className="flex gap-2">
                   <Link to="/login">
-                    <Button
-                      variant="ghost"
-                      className="rounded-full px-6 font-bold text-[#1F5E3B]"
-                    >
+                    <Button variant="ghost" className="rounded-full px-6 font-bold text-[#1F5E3B]">
                       Login
                     </Button>
                   </Link>
@@ -255,11 +245,7 @@ const Navbar = () => {
               )}
             </div>
 
-            <Button
-              variant="ghost"
-              className="md:hidden p-2"
-              onClick={() => setIsMobileMenuOpen(true)}
-            >
+            <Button variant="ghost" className="md:hidden p-2" onClick={() => setIsMobileMenuOpen(true)}>
               <Menu className="w-7 h-7" />
             </Button>
           </div>
@@ -277,9 +263,7 @@ const Navbar = () => {
         >
           <div className="container mx-auto py-12 px-6 max-h-[85vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-10">
-              <h2 className="text-2xl font-bold text-[#1A2E1A] border-l-4 border-[#1F5E3B] pl-4">
-                All Categories
-              </h2>
+              <h2 className="text-2xl font-bold text-[#1A2E1A] border-l-4 border-[#1F5E3B] pl-4">All Categories</h2>
               <Button variant="ghost" onClick={() => setIsCatExpanded(false)}>
                 <X className="mr-2 h-4 w-4" /> Close
               </Button>
@@ -292,9 +276,7 @@ const Navbar = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10">
                 {categories?.map((cat: any) => (
                   <div key={cat._id} className="space-y-4">
-                    <h3 className="text-lg font-black text-[#1A2E1A] border-b pb-2">
-                      {cat.name}
-                    </h3>
+                    <h3 className="text-lg font-black text-[#1A2E1A] border-b pb-2">{cat.name}</h3>
                     <ul className="space-y-2">
                       {cat.subcategories?.map((sub: any) => (
                         <li key={sub._id}>
@@ -328,13 +310,12 @@ const Navbar = () => {
           </Button>
         </div>
         <div className="p-6 space-y-8 overflow-y-auto h-[calc(100vh-80px)]">
-          {/* User Section in Mobile Menu */}
           {isLoggedIn && (
             <div className="flex items-center gap-4 bg-[#F1F5F1] p-4 rounded-2xl">
               <div className="w-12 h-12 bg-[#1F5E3B] rounded-full flex items-center justify-center text-white text-xl font-bold overflow-hidden">
                 {user.image ? (
                   <img
-                    src={user.image}
+                    src={getFullImageUrl(user.image)!}
                     alt={user.name}
                     className="w-full h-full object-cover"
                   />
@@ -352,28 +333,17 @@ const Navbar = () => {
           {/* Mobile Search */}
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#1F5E3B]" />
-            <Input
-              placeholder="Search products..."
-              className="bg-[#F1F5F1] border-none rounded-2xl h-14 pl-12"
-            />
+            <Input placeholder="Search products..." className="bg-[#F1F5F1] border-none rounded-2xl h-14 pl-12" />
           </div>
 
           <div className="space-y-4">
-            <NavLink
-              to="/"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-2xl font-bold"
-            >
+            <NavLink to="/" onClick={() => setIsMobileMenuOpen(false)} className="block text-2xl font-bold">
               Home
             </NavLink>
-            <NavLink
-              to="/all_products"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="block text-2xl font-bold"
-            >
+            <NavLink to="/all_products" onClick={() => setIsMobileMenuOpen(false)} className="block text-2xl font-bold">
               Shop All
             </NavLink>
-            {isAdmin && (
+            {isAdmin ? (
               <NavLink
                 to="/admin"
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -381,8 +351,15 @@ const Navbar = () => {
               >
                 Admin Panel
               </NavLink>
+            ) : (
+              <NavLink
+                to="/user"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block text-2xl font-bold text-[#1F5E3B]"
+              >
+                User Panel
+              </NavLink>
             )}
-            {/* Logic: Mobile Cart link only for non-admins */}
             {!isAdmin && (
               <NavLink
                 to="/cart"

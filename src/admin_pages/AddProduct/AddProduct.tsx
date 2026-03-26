@@ -319,7 +319,7 @@ const AddProduct = () => {
               </label>
               <input
                 type="number"
-                required
+               
                 value={formData.stockQuantity} // Controlled input
                 placeholder="Ex: 50"
                 className="w-full px-6 py-4 bg-[#F8FAF8] border-none rounded-2xl focus:ring-2 focus:ring-[#1F5E3B] font-bold"

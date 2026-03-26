@@ -10,7 +10,7 @@ const ProductCard = ({ product }: { product: any }) => {
   console.log(product.slug);
 
   return (
-    <Link to={`/en/product/${product?.slug || product?._id}`}>
+    <Link to={`/product/${product?.slug || product?._id}`}>
       <div className="group bg-white rounded-[2.5rem] overflow-hidden shadow-sm border border-gray-50 transition-all hover:shadow-2xl h-full flex flex-col">
         <div className="relative aspect-square overflow-hidden bg-gray-50">
           {product.stock === "out-of-stock" && (

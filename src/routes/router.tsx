@@ -15,10 +15,12 @@ import Addbanner from "@/admin_pages/addBanners/Addbanner";
 import Addoffer from "@/admin_pages/offers/Addoffer";
 import ProductList from "@/admin_pages/allProduct/AllProduct";
 import EditProduct from "@/admin_pages/editProduct/EditProduct";
+import LoginPage from "@/authPages/LoginPage";
+import RegisterPage from "@/authPages/RegisterPage";
 
 export const router = createBrowserRouter([
   {
-    path: "/:locale",
+    path: "/",
     element: <MainLayout />,
     children: [
       {
@@ -85,6 +87,15 @@ export const router = createBrowserRouter([
         element: <Addoffer />,
       },
     ],
+  },
+
+  {
+    path: "login",
+    element: <LoginPage />,
+  },
+  {
+    path: "register",
+    element: <RegisterPage />,
   },
   {
     path: "/",

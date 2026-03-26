@@ -108,6 +108,15 @@ export const productApi = baseApi.injectEndpoints({
       // Backend { success: true, data: {...} } pathachche, tai transform dorkar
       transformResponse: (response: any) => response?.data || response,
     }),
+    // redux example
+    createReview: builder.mutation({
+      query: ({ id, ...body }) => ({
+        url: `/product/review/${id}/reviews`,
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Product"],
+    }),
   }),
 });
 
@@ -118,6 +127,6 @@ export const {
   useUpdateProductMutation,
   useDeleteProductMutation,
   useGetProductBySlugQuery,
-
+  useCreateReviewMutation,
   useGetProductDetailsQuery,
 } = productApi;

@@ -8,6 +8,8 @@ import {
   X,
   ChevronRight,
   Loader2,
+  LogOut,
+  Settings,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,22 +17,57 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Link, NavLink } from "react-router-dom";
-// RTK Query Hook Import
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+
+// RTK Query & Redux Hooks
 import { useGetCategoriesQuery } from "@/redux/features/admin/category";
+import { useGetMeQuery, useLogoutMutation } from "@/redux/features/authApi";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
-  // @ts-ignore
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [isCatExpanded, setIsCatExpanded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
-  // 1. Fetch Categories from API
-  const { data: categories, isLoading } = useGetCategoriesQuery();
+  // 1. Auth Status & User Data Fetching
+  const { data: user, isLoading: isUserLoading } = useGetMeQuery(undefined);
+  const [logout] = useLogoutMutation();
+  const isLoggedIn = !!user;
+  const isAdmin = user?.role === "ADMIN";
 
-  // প্যানেল ওপেন থাকলে ব্যাকগ্রাউন্ড স্ক্রল বন্ধ রাখা
+  // 2. Cart Count Calculation
+  const cartState = useSelector((state: any) => state.cart);
+  const items = cartState?.items || cartState?.cartItems || [];
+  const totalCartCount = items.reduce(
+    (total: number, item: any) => total + (item.quantity || 1),
+    0,
+  );
+
+  // 3. Categories Fetching
+  const { data: categories, isLoading: isCatLoading } =
+    useGetCategoriesQuery(undefined);
+
+  // Handle Logout
+  const handleLogout = async () => {
+    try {
+      await logout(undefined).unwrap();
+      Swal.fire({
+        title: "Logged Out",
+        text: "You have been successfully logged out.",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+      navigate("/login");
+    } catch (err) {
+      Swal.fire("Error", "Logout failed. Please try again.", "error");
+    }
+  };
+
   useEffect(() => {
     if (isCatExpanded || isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -42,19 +79,19 @@ const Navbar = () => {
   return (
     <nav className="relative w-full border-b bg-white z-[100]">
       {/* --- Main Desktop Header --- */}
-      <div className="mx-auto mr-14 ml-14 px-4 h-20 flex items-center justify-between gap-4">
+      <div className="mx-auto mr-4 md:mr-14 ml-4 md:ml-14 px-4 h-20 flex items-center justify-between gap-4">
         {/* Logo Section */}
-        <div className="flex items-center gap-2 shrink-0">
+        <Link to="/" className="flex items-center gap-2 shrink-0">
           <div className="w-9 h-9 bg-[#1F5E3B] rounded-lg flex items-center justify-center shadow-sm">
             <span className="text-white text-lg">🕌</span>
           </div>
           <h1 className="text-xl font-black text-[#1A2E1A] tracking-tighter">
             HALAL <span className="text-[#1F5E3B]">JAPAN</span>
           </h1>
-        </div>
+        </Link>
 
-        {/* Desktop Controls */}
-        <div className="hidden lg:flex flex-1 items-center gap-3 ml-8 ">
+        {/* Desktop Search & Categories */}
+        <div className="hidden lg:flex flex-1 items-center gap-3 ml-8">
           <Button
             variant="default"
             className={`rounded-full px-6 h-12 flex items-center gap-2 border-none transition-all duration-300 ${
@@ -71,7 +108,9 @@ const Navbar = () => {
               {[...Array(4)].map((_, i) => (
                 <div
                   key={i}
-                  className={`w-1.5 h-1.5 rounded-sm transition-colors duration-300 ${isCatExpanded ? "bg-white" : "bg-[#1F5E3B]"}`}
+                  className={`w-1.5 h-1.5 rounded-sm transition-colors duration-300 ${
+                    isCatExpanded ? "bg-white" : "bg-[#1F5E3B]"
+                  }`}
                 />
               ))}
             </div>
@@ -93,66 +132,126 @@ const Navbar = () => {
         {/* Right Side Icons */}
         <div className="flex items-center gap-2 md:gap-6">
           <div className="hidden xl:flex items-center gap-6 text-[#4A5568] font-medium mr-4">
-            <NavLink className="hover:text-[#1F5E3B] transition-colors" to="/">
+            <NavLink
+              className={({ isActive }) =>
+                isActive ? "text-[#1F5E3B] font-bold" : "hover:text-[#1F5E3B]"
+              }
+              to="/"
+            >
               Home
             </NavLink>
             <NavLink
-              className="hover:text-[#1F5E3B] transition-colors"
-              to="all_products"
+              className={({ isActive }) =>
+                isActive ? "text-[#1F5E3B] font-bold" : "hover:text-[#1F5E3B]"
+              }
+              to="/all_products"
             >
               Shop All
             </NavLink>
             <NavLink
-              className="hover:text-[#1F5E3B] transition-colors"
-              to="contact"
+              className={({ isActive }) =>
+                isActive ? "text-[#1F5E3B] font-bold" : "hover:text-[#1F5E3B]"
+              }
+              to="/contact"
             >
-              Contact Us
-            </NavLink>
-            <NavLink
-              className="hover:text-[#1F5E3B] transition-colors"
-              to="about"
-            >
-              About Us
+              Contact
             </NavLink>
           </div>
 
           <div className="flex items-center gap-3 md:gap-5">
-            <Link to={"cart"}>
-              <div className="relative cursor-pointer group">
-                <ShoppingCart className="w-6 h-6 text-[#4A5568] group-hover:text-[#1F5E3B]" />
-                <span className="absolute -top-2 -right-2 bg-[#1F5E3B] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
-                  2
-                </span>
-              </div>
-            </Link>
+            {/* Logic: Cart only shows if NOT Admin */}
+            {!isAdmin && (
+              <Link to="/cart">
+                <div className="relative cursor-pointer group">
+                  <ShoppingCart className="w-6 h-6 text-[#4A5568] group-hover:text-[#1F5E3B]" />
+                  {totalCartCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-[#1F5E3B] text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                      {totalCartCount}
+                    </span>
+                  )}
+                </div>
+              </Link>
+            )}
 
-            <div className="border-l hidden md:block pl-3 md:pl-5 ml-1 flex items-center">
-              {isLoggedIn ? (
+            <div className="border-l hidden md:block pl-3 md:pl-5 ml-1">
+              {isUserLoading ? (
+                <Loader2 className="animate-spin text-[#1F5E3B] w-6 h-6" />
+              ) : isLoggedIn ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="ghost"
-                      className="h-10 w-10 rounded-full p-0 bg-[#F1F5F1] hover:bg-[#E2EBE2]"
+                      className="h-10 px-2 gap-2 rounded-full bg-[#F1F5F1] hover:bg-[#E2EBE2]"
                     >
-                      <User className="w-5 h-5 text-[#1F5E3B]" />
+                      <div className="w-7 h-7 bg-[#1F5E3B] rounded-full flex items-center justify-center text-white overflow-hidden">
+                        {user.image ? (
+                          <img
+                            src={user.image}
+                            alt={user.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <User size={16} />
+                        )}
+                      </div>
+                      <span className="text-sm font-bold text-[#1A2E1A] hidden xl:inline-block max-w-[100px] truncate">
+                        {user.name.split(" ")[0]}
+                      </span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48 mt-2 p-2">
-                    <DropdownMenuItem className="cursor-pointer py-2 rounded-md">
-                      Profile Settings
+                  <DropdownMenuContent
+                    align="end"
+                    className="w-56 mt-2 p-2 rounded-2xl border-gray-100 shadow-xl"
+                  >
+                    <div className="px-3 py-3">
+                      <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
+                        Signed in as
+                      </p>
+                      <p className="text-sm font-bold text-[#1A2E1A] truncate">
+                        {user.email}
+                      </p>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => navigate("/profile")}
+                      className="cursor-pointer py-3 rounded-xl gap-3"
+                    >
+                      <User size={18} className="text-gray-400" /> Profile
+                      Settings
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="cursor-pointer py-2 rounded-md text-red-600 focus:text-red-600 focus:bg-red-50">
-                      Logout
+                    {isAdmin && (
+                      <DropdownMenuItem
+                        onClick={() => navigate("/admin")}
+                        className="cursor-pointer py-3 rounded-xl gap-3 text-[#1F5E3B]"
+                      >
+                        <Settings size={18} /> Admin Dashboard
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={handleLogout}
+                      className="cursor-pointer py-3 rounded-xl gap-3 text-red-600 focus:text-red-600 focus:bg-red-50"
+                    >
+                      <LogOut size={18} /> Logout
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Button
-                  variant="default"
-                  className="bg-[#1F5E3B] hover:bg-[#16432a] rounded-full px-6 text-white"
-                >
-                  Register
-                </Button>
+                <div className="flex gap-2">
+                  <Link to="/login">
+                    <Button
+                      variant="ghost"
+                      className="rounded-full px-6 font-bold text-[#1F5E3B]"
+                    >
+                      Login
+                    </Button>
+                  </Link>
+                  <Link to="/register">
+                    <Button className="bg-[#1F5E3B] hover:bg-[#16432a] rounded-full px-6 text-white font-bold">
+                      Register
+                    </Button>
+                  </Link>
+                </div>
               )}
             </div>
 
@@ -167,19 +266,13 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* --- Full VH Category Overlay (Desktop) --- */}
+      {/* --- Category Overlay (Desktop) --- */}
       <div
-        className={`fixed inset-0 top-20 bg-black/40 backdrop-blur-sm z-[90] transition-opacity duration-500 ${
-          isCatExpanded ? "opacity-100 visible" : "opacity-0 invisible"
-        }`}
+        className={`fixed inset-0 top-20 bg-black/40 backdrop-blur-sm z-[90] transition-opacity duration-500 ${isCatExpanded ? "opacity-100 visible" : "opacity-0 invisible"}`}
         onClick={() => setIsCatExpanded(false)}
       >
         <div
-          className={`bg-white w-full border-t shadow-2xl transition-all duration-500 ease-out transform ${
-            isCatExpanded
-              ? "translate-y-0 opacity-100"
-              : "-translate-y-10 opacity-0"
-          }`}
+          className={`bg-white w-full border-t shadow-2xl transition-all duration-500 ease-out transform ${isCatExpanded ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0"}`}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="container mx-auto py-12 px-6 max-h-[85vh] overflow-y-auto">
@@ -191,34 +284,22 @@ const Navbar = () => {
                 <X className="mr-2 h-4 w-4" /> Close
               </Button>
             </div>
-
-            {/* Loading State for Categories */}
-            {isLoading ? (
+            {isCatLoading ? (
               <div className="flex justify-center py-20">
                 <Loader2 className="animate-spin text-[#1F5E3B]" size={40} />
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10">
-                {categories?.map((cat: any, idx: number) => (
-                  <div
-                    key={cat._id}
-                    className="space-y-4 transition-all duration-700"
-                    style={{
-                      transitionDelay: `${idx * 50}ms`,
-                      transform: isCatExpanded
-                        ? "translateY(0)"
-                        : "translateY(20px)",
-                      opacity: isCatExpanded ? 1 : 0,
-                    }}
-                  >
+                {categories?.map((cat: any) => (
+                  <div key={cat._id} className="space-y-4">
                     <h3 className="text-lg font-black text-[#1A2E1A] border-b pb-2">
                       {cat.name}
                     </h3>
                     <ul className="space-y-2">
-                      {cat.subcategories?.map((sub: any, i: number) => (
-                        <li key={sub._id || i}>
+                      {cat.subcategories?.map((sub: any) => (
+                        <li key={sub._id}>
                           <Link
-                            to={`all_products?subCategory=${sub._id}`}
+                            to={`/all_products?subCategory=${sub._id}`}
                             onClick={() => setIsCatExpanded(false)}
                             className="text-gray-500 hover:text-[#1F5E3B] text-sm flex items-center group transition-colors"
                           >
@@ -236,121 +317,112 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* --- Smooth Mobile Full Menu --- */}
+      {/* --- Mobile Menu --- */}
       <div
-        className={`fixed inset-0 bg-white z-[150] md:hidden transition-all duration-500 ease-in-out transform ${
-          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed inset-0 bg-white z-[150] md:hidden transition-all duration-500 ease-in-out transform ${isMobileMenuOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <div className="flex items-center justify-between px-6 h-20 border-b">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#1F5E3B] rounded flex items-center justify-center">
-              <span className="text-white text-sm">🕌</span>
-            </div>
-            <h1 className="text-lg font-bold text-[#1A2E1A]">HALAL JAPAN</h1>
-          </div>
-          <Button
-            variant="ghost"
-            className="p-0"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
+          <h1 className="text-lg font-bold text-[#1A2E1A]">HALAL JAPAN</h1>
+          <Button variant="ghost" onClick={() => setIsMobileMenuOpen(false)}>
             <X className="w-8 h-8 text-gray-600" />
           </Button>
         </div>
-
         <div className="p-6 space-y-8 overflow-y-auto h-[calc(100vh-80px)]">
+          {/* User Section in Mobile Menu */}
+          {isLoggedIn && (
+            <div className="flex items-center gap-4 bg-[#F1F5F1] p-4 rounded-2xl">
+              <div className="w-12 h-12 bg-[#1F5E3B] rounded-full flex items-center justify-center text-white text-xl font-bold overflow-hidden">
+                {user.image ? (
+                  <img
+                    src={user.image}
+                    alt={user.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  user.name[0]
+                )}
+              </div>
+              <div>
+                <p className="font-bold text-[#1A2E1A]">{user.name}</p>
+                <p className="text-xs text-gray-500">{user.email}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Mobile Search */}
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#1F5E3B]" />
             <Input
               placeholder="Search products..."
-              className="bg-[#F1F5F1] border-none rounded-2xl h-14 pl-12 text-[#1F5E3B]"
+              className="bg-[#F1F5F1] border-none rounded-2xl h-14 pl-12"
             />
           </div>
 
           <div className="space-y-4">
-            <p className="text-[10px] font-black text-[#1F5E3B] uppercase tracking-widest opacity-50">
-              Main Menu
-            </p>
-            <div className="flex flex-col gap-5 text-2xl font-bold text-[#1A2E1A]">
+            <NavLink
+              to="/"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-2xl font-bold"
+            >
+              Home
+            </NavLink>
+            <NavLink
+              to="/all_products"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-2xl font-bold"
+            >
+              Shop All
+            </NavLink>
+            {isAdmin && (
               <NavLink
-                to="/"
+                to="/admin"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex justify-between items-center"
+                className="block text-2xl font-bold text-[#1F5E3B]"
               >
-                Home <ChevronRight className="text-gray-200" />
+                Admin Panel
               </NavLink>
+            )}
+            {/* Logic: Mobile Cart link only for non-admins */}
+            {!isAdmin && (
               <NavLink
-                to="all_products"
+                to="/cart"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex justify-between items-center"
+                className="block text-2xl font-bold"
               >
-                Shop All <ChevronRight className="text-gray-200" />
+                My Cart ({totalCartCount})
               </NavLink>
-              <NavLink
-                to="contact"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="flex justify-between items-center"
-              >
-                Contact Us <ChevronRight className="text-gray-200" />
-              </NavLink>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <p className="text-[10px] font-black text-[#1F5E3B] uppercase tracking-widest opacity-50">
-              Shop By Category
-            </p>
-            <div className="grid grid-cols-1 gap-4">
-              {isLoading ? (
-                <Loader2 className="animate-spin text-[#1F5E3B] mx-auto" />
-              ) : (
-                categories?.map((cat: any) => (
-                  <div
-                    key={cat._id}
-                    className="bg-[#F1F5F1] p-5 rounded-2xl space-y-4"
-                  >
-                    <p className="font-bold text-[#1A2E1A] text-lg flex items-center justify-between">
-                      {cat.name}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {cat.subcategories?.map((sub: any, i: number) => (
-                        <Link
-                          key={sub._id || i}
-                          to={`all_products?subCategory=${sub._id}`}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="text-xs bg-white px-3 py-2 rounded-full border border-gray-100 text-gray-600 font-medium hover:text-[#1F5E3B] hover:border-[#1F5E3B] transition-colors"
-                        >
-                          {sub.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
+            )}
           </div>
 
           <div className="pt-4 border-t">
             {isLoggedIn ? (
-              <div className="space-y-4">
-                <p className="text-sm font-medium text-gray-400">Account</p>
+              <Button
+                onClick={handleLogout}
+                className="w-full h-14 rounded-2xl bg-red-50 text-red-600 font-bold"
+              >
+                Logout
+              </Button>
+            ) : (
+              <div className="grid gap-4">
                 <Button
-                  variant="outline"
-                  className="w-full h-12 justify-start rounded-xl"
+                  onClick={() => {
+                    navigate("/login");
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full h-14 rounded-2xl bg-[#F1F5F1] text-[#1F5E3B] font-bold"
                 >
-                  Profile Settings
+                  Login
                 </Button>
                 <Button
-                  variant="ghost"
-                  className="w-full h-12 justify-start text-red-600 hover:bg-red-50 rounded-xl"
+                  onClick={() => {
+                    navigate("/register");
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full h-14 rounded-2xl bg-[#1F5E3B] text-white font-bold"
                 >
-                  Logout
+                  Register Now
                 </Button>
               </div>
-            ) : (
-              <Button className="w-full h-14 rounded-2xl bg-[#1F5E3B] text-lg font-bold text-white">
-                Register Now
-              </Button>
             )}
           </div>
         </div>

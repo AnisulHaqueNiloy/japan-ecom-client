@@ -19,6 +19,7 @@ export const baseApi = createApi({
     "DashboardStats", // Admin dashboard summary
     "SubCategory", // Subcategory filters
     "Offer",
+    "Orders",
   ],
 
   endpoints: () => ({}),

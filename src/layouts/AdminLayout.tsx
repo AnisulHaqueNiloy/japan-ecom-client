@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Outlet, Link, useLocation,   } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import Swal from "sweetalert2"; // SweetAlert2 Import
+import { useGetMeQuery, useLogoutMutation } from "@/redux/features/authApi";
+// AuthSlice path check korun
+
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -11,18 +16,78 @@ import {
   LogOut,
   Menu,
   X,
+  Loader2,
 } from "lucide-react";
 
 const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  // API Logout Mutation Hook
+  const [logoutApi, { isLoading: isLoggingOut }] = useLogoutMutation();
+  const {data:user} = useGetMeQuery(undefined)
+  console.log(user.image)
 
-  // আপনার রাউটিং এর সাথে মিল রেখে পাথগুলো সেট করা হয়েছে
+  // --- Logout Handler with SweetAlert2 ---
+  const handleLogout = async () => {
+    // Confirmation Dialog
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You will be logged out of the admin panel!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#1F5E3B",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, logout!",
+      background: "#fff",
+      color: "#1A2E1A",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        // 1. Call the logout API (Server-side)
+        await logoutApi(undefined).unwrap();
+
+        // 2. Clear Redux Auth State (Client-side)
+        
+
+        // 3. Clear Token from LocalStorage
+        localStorage.removeItem("token");
+
+        // 4. Success Message & Redirect
+        Swal.fire({
+          title: "Logged Out!",
+          text: "You have been logged out successfully.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        navigate("/", { replace: true });
+      } catch (error: any) {
+        console.error("Logout Error:", error);
+        
+        // Error holeo safety-r jonno local state clear kore redirect kora bhalo
+        
+        localStorage.removeItem("token");
+        navigate("/");
+
+        Swal.fire({
+          title: "Logged Out",
+          text: "Session cleared.",
+          icon: "info",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    }
+  };
+
   const menuItems = [
     { icon: <LayoutDashboard size={20} />, label: "Overview", path: `/admin` },
     { icon: <ShoppingBag size={20} />, label: "Orders", path: `/admin/orders` },
-  
     {
       icon: <PlusCircle size={20} />,
       label: "Add Product",
@@ -104,12 +169,20 @@ const AdminLayout = () => {
 
         {/* Bottom Logout Area */}
         <div className="absolute bottom-8 left-6 right-6">
-          <button className="flex items-center gap-3 px-5 py-3.5 w-full rounded-2xl font-bold text-sm text-red-500 hover:bg-red-50 transition-all group">
-            <LogOut
-              size={20}
-              className="group-hover:translate-x-1 transition-transform"
-            />
-            Logout
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="flex items-center gap-3 px-5 py-3.5 w-full rounded-2xl font-bold text-sm text-red-500 hover:bg-red-50 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoggingOut ? (
+              <Loader2 size={20} className="animate-spin" />
+            ) : (
+              <LogOut
+                size={20}
+                className="group-hover:translate-x-1 transition-transform"
+              />
+            )}
+            {isLoggingOut ? "Logging out..." : "Logout"}
           </button>
         </div>
       </aside>
@@ -133,14 +206,14 @@ const AdminLayout = () => {
           {/* Profile Section */}
           <div className="flex items-center gap-4">
             <div className="text-right hidden md:block">
-              <p className="text-sm font-black text-[#1A2E1A]">Ariful Islam</p>
+              <p className="text-sm font-black text-[#1A2E1A]">{user?.name}</p>
               <p className="text-[10px] text-[#1F5E3B] font-bold uppercase tracking-wider">
                 Super Admin
               </p>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-[#F1F5F1] border border-gray-100 flex items-center justify-center text-[#1F5E3B] font-black shadow-sm">
-              AI
-            </div>
+            {/* <div className="w-12 h-12 rounded-2xl bg-[#F1F5F1] border border-gray-100 flex items-center justify-center text-[#1F5E3B] font-black shadow-sm">
+              <img src={user?.image} alt="" className="rounded-full"/>
+            </div> */}
           </div>
         </header>
 

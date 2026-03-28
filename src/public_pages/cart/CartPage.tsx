@@ -94,7 +94,7 @@ const CartPage = () => {
         confirmButtonColor: "#1F5E3B",
       });
       dispatch(clearCart());
-      navigate("/profile");
+      navigate("/all_products");
     } catch (err: any) {
       Swal.fire("Error", err?.data?.message || "Order failed", "error");
     }

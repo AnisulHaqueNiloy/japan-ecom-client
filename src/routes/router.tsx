@@ -21,6 +21,7 @@ import OrderDetails from "@/admin_pages/OrdersAdmin/OrderDetails";
 import UserLayout from "@/layouts/UserLayout";
 import UserOrderList from "@/user_pages/UserOrderList";
 import ProfileSetting from "@/user_pages/ProfileSetting";
+import AdminGuard from "./AdminGuarg";
 
 export const router = createBrowserRouter([
   {
@@ -64,49 +65,24 @@ export const router = createBrowserRouter([
     ]
   },
 
-  {
+ {
     path: "/admin",
-    element: <AdminLayout />,
+    element: <AdminGuard />, 
     children: [
       {
-        index: true,
-        element: <AdminOverview />,
-      },
-      {
-        path: "orders",
-        element: <AllOrders />,
-      },
-       {
-        path: "orders/:id",
-        element: <OrderDetails />,
-      },
-      {
-        path: "add-product",
-        element: <AddProduct />,
-      },
-      {
-        path: "edit-product/:id",
-        element: <EditProduct />,
-      },
-      {
-        path: "all-product",
-        element: <ProductList></ProductList>,
-      },
-      {
-        path: "add-categories",
-        element: <Addcategory />,
-      },
-      {
-        path: "users",
-        element: <Userinfo />,
-      },
-      {
-        path: "banners",
-        element: <Addbanner />,
-      },
-      {
-        path: "offers",
-        element: <Addoffer />,
+        element: <AdminLayout />,
+        children: [
+          { index: true, element: <AdminOverview /> },
+          { path: "orders", element: <AllOrders /> },
+          { path: "orders/:id", element: <OrderDetails /> },
+          { path: "add-product", element: <AddProduct /> },
+          { path: "edit-product/:id", element: <EditProduct /> },
+          { path: "all-product", element: <ProductList /> },
+          { path: "add-categories", element: <Addcategory /> },
+          { path: "users", element: <Userinfo /> },
+          { path: "banners", element: <Addbanner /> },
+          { path: "offers", element: <Addoffer /> },
+        ],
       },
     ],
   },

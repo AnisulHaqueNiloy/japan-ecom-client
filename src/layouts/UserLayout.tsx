@@ -1,29 +1,85 @@
 import { useState } from "react";
-import { Outlet, Link, useLocation,   } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+
+import Swal from "sweetalert2";
+import { useGetMeQuery, useLogoutMutation } from "@/redux/features/authApi";
+const IMG_URL = import.meta.env.VITE_API_URL
 import {
   LayoutDashboard,
   ShoppingBag,
-  PlusCircle,
-  Layers,
-  Users,
-  Image as ImageIcon,
-  Megaphone,
   LogOut,
   Menu,
   X,
+  Loader2,
 } from "lucide-react";
 
 const UserLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { pathname } = useLocation();
+  const navigate = useNavigate();
 
 
-  // আপনার রাউটিং এর সাথে মিল রেখে পাথগুলো সেট করা হয়েছে
+  // API Logout Mutation Hook
+  const [logoutApi, { isLoading: isLoggingOut }] = useLogoutMutation();
+  const {data:user} = useGetMeQuery(undefined)
+// console.log(user.image)
+  // --- Logout Handler with SweetAlert2 ---
+  const handleLogout = async () => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You will be logged out of your account!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#1F5E3B",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, logout!",
+      background: "#fff",
+      color: "#1A2E1A",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        // 1. Call the logout API
+        await logoutApi(undefined).unwrap();
+
+        // 2. Clear Redux State
+   
+
+        // 3. Clear Token
+        localStorage.removeItem("token");
+
+        // 4. Success Alert & Redirect
+        Swal.fire({
+          title: "Logged Out!",
+          text: "See you again soon.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        navigate("/", { replace: true });
+      } catch (error: any) {
+        console.error("Logout Error:", error);
+        
+        // Force logout on error
+        
+        localStorage.removeItem("token");
+        navigate("/");
+
+        Swal.fire({
+          title: "Session Cleared",
+          text: "You have been logged out.",
+          icon: "info",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      }
+    }
+  };
+
   const menuItems = [
     { icon: <LayoutDashboard size={20} />, label: "Orders", path: `/user` },
     { icon: <ShoppingBag size={20} />, label: "Profile", path: `/user/profile` },
-  
-    
   ];
 
   return (
@@ -87,12 +143,20 @@ const UserLayout = () => {
 
         {/* Bottom Logout Area */}
         <div className="absolute bottom-8 left-6 right-6">
-          <button className="flex items-center gap-3 px-5 py-3.5 w-full rounded-2xl font-bold text-sm text-red-500 hover:bg-red-50 transition-all group">
-            <LogOut
-              size={20}
-              className="group-hover:translate-x-1 transition-transform"
-            />
-            Logout
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className="flex items-center gap-3 px-5 py-3.5 w-full rounded-2xl font-bold text-sm text-red-500 hover:bg-red-50 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isLoggingOut ? (
+              <Loader2 size={20} className="animate-spin" />
+            ) : (
+              <LogOut
+                size={20}
+                className="group-hover:translate-x-1 transition-transform"
+              />
+            )}
+            {isLoggingOut ? "Logging out..." : "Logout"}
           </button>
         </div>
       </aside>
@@ -109,7 +173,7 @@ const UserLayout = () => {
               <Menu size={24} />
             </button>
             <h2 className="font-black text-[#1A2E1A] text-lg uppercase tracking-tight hidden sm:block">
-              Welcome Back, User Name
+              Welcome Back, {user?.name}
             </h2>
           </div>
 
@@ -118,11 +182,11 @@ const UserLayout = () => {
             <div className="text-right hidden md:block">
               <p className="text-sm font-black text-[#1A2E1A]">User Name</p>
               <p className="text-[10px] text-[#1F5E3B] font-bold uppercase tracking-wider">
-                User
+                {user?.name}
               </p>
             </div>
             <div className="w-12 h-12 rounded-2xl bg-[#F1F5F1] border border-gray-100 flex items-center justify-center text-[#1F5E3B] font-black shadow-sm">
-              AI
+              <img src={`${IMG_URL}${user?.image}`} alt="" className="rounded-full"/>
             </div>
           </div>
         </header>

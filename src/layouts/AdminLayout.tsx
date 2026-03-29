@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+ 
 import Swal from "sweetalert2"; // SweetAlert2 Import
 import { useGetMeQuery, useLogoutMutation } from "@/redux/features/authApi";
 // AuthSlice path check korun
@@ -23,7 +23,7 @@ const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { pathname } = useLocation();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   // API Logout Mutation Hook
   const [logoutApi, { isLoading: isLoggingOut }] = useLogoutMutation();

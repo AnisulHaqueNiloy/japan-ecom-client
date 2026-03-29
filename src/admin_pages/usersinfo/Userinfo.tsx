@@ -8,14 +8,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, User, Mail, ShieldCheck } from "lucide-react";
+import { Loader2, User, Mail,  } from "lucide-react";
 import { useGetAllUsersQuery } from "@/redux/features/authApi";
 
 function Userinfo() {
   const { data: userData, isLoading } = useGetAllUsersQuery(undefined);
   const userlist = userData?.data || [];
 
-  const users = userlist.filter((item )=>item.role !=="ADMIN")
+  const users = userlist.filter((item:any )=>item.role !=="ADMIN")
 
   if (isLoading) {
     return (

@@ -4,12 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   ArrowLeft, 
-  Printer, 
+   
   Calendar, 
   User, 
   MapPin, 
   Phone, 
-  Mail, 
+  
   Package, 
   CreditCard,
   Loader2

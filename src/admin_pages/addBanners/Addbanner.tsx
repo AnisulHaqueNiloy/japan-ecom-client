@@ -5,7 +5,7 @@ import {
   useDeleteBannerMutation 
 } from "@/redux/features/admin/bannerApi";
 import Swal from "sweetalert2";
-import { Loader2, Plus, ImageIcon, X, Trash2, Film } from "lucide-react";
+import { Loader2, Plus, X, Trash2, Film } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const IMG_URL = import.meta.env.VITE_API_URL;

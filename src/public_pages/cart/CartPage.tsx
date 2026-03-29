@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion,  } from "framer-motion";
 import type { RootState } from "@/redux/store";
 
 import { useGetMeQuery } from "@/redux/features/authApi";

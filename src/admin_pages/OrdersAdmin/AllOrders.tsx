@@ -30,14 +30,14 @@ import {
 import Swal from "sweetalert2";
 import { useDeleteOrderMutation, useGetAllOrdersQuery, useUpdateOrderStatusMutation } from "@/redux/features/admin/adminOrderApi";
 import { Link } from "react-router-dom";
-const IMG_URL = import.meta.env.VITE_API_URL
+// const IMG_URL = import.meta.env.VITE_API_URL
 const AllOrders = () => {
   const {
     data: ordersData,
     isLoading,
     refetch,
   } = useGetAllOrdersQuery(undefined);
-  const [updateStatus, { isLoading: isUpdating }] =
+  const [updateStatus] =
     useUpdateOrderStatusMutation();
   const [deleteOrder] = useDeleteOrderMutation();
 

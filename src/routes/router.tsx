@@ -22,6 +22,10 @@ import UserLayout from "@/layouts/UserLayout";
 import UserOrderList from "@/user_pages/UserOrderList";
 import ProfileSetting from "@/user_pages/ProfileSetting";
 import AdminGuard from "./AdminGuarg";
+import ShippingPolicy from "@/public_pages/ShippingPolicy/ShippingPolicy";
+import ReturnPolicy from "@/public_pages/ReturnPolicy/ReturnPolicy";
+import TermsPage from "@/public_pages/TermsPage";
+import Contact from "@/public_pages/Contact";
 
 export const router = createBrowserRouter([
   {
@@ -48,26 +52,42 @@ export const router = createBrowserRouter([
         path: "cart",
         element: <CartPage />,
       },
+      {
+        path: "shipping-policy",
+        element: <ShippingPolicy />,
+      },
+      {
+        path: "return-policy",
+        element: <ReturnPolicy />,
+      },
+      {
+        path: "terms",
+        element: <TermsPage />,
+      },
+      {
+        path: "contact",
+        element: <Contact />,
+      },
     ],
   },
   {
-    path:'/user',
-    element:<UserLayout/>,
-    children:[
+    path: "/user",
+    element: <UserLayout />,
+    children: [
       {
-        index:true,
-        element:<UserOrderList/>
+        index: true,
+        element: <UserOrderList />,
       },
       {
-        path:'profile',
-        element:<ProfileSetting/>
-      }
-    ]
+        path: "profile",
+        element: <ProfileSetting />,
+      },
+    ],
   },
 
- {
+  {
     path: "/admin",
-    element: <AdminGuard />, 
+    element: <AdminGuard />,
     children: [
       {
         element: <AdminLayout />,

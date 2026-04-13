@@ -49,7 +49,7 @@ const Addoffer = () => {
   }
 
   return (
-    <div className="p-4 md:p-6 lg:p-8">
+    <div className="p-4 md:p-6 lg:p-8 notranslate">
       {/* --- Header Section --- */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 mb-8 lg:mb-10">
         <div className="p-4 sm:p-5 bg-[#1F5E3B] text-white rounded-[20px] sm:rounded-[24px] shadow-2xl shadow-green-100 rotate-3 hover:rotate-0 transition-transform duration-300">

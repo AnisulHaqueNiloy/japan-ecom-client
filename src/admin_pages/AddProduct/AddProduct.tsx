@@ -98,7 +98,7 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="p-4 lg:p-8 ">
+    <div className="p-4 lg:p-8 notranslate">
       {/* Header Section */}
       <div className="flex items-center gap-4 mb-10">
         <div className="p-4 bg-[#1F5E3B] text-white rounded-3xl shadow-xl shadow-green-100">
@@ -319,7 +319,6 @@ const AddProduct = () => {
               </label>
               <input
                 type="number"
-               
                 value={formData.stockQuantity} // Controlled input
                 placeholder="Ex: 50"
                 className="w-full px-6 py-4 bg-[#F8FAF8] border-none rounded-2xl focus:ring-2 focus:ring-[#1F5E3B] font-bold"

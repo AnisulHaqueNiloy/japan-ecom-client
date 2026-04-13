@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { 
-  useAddBannerMutation, 
-  useGetBannersQuery, 
-  useDeleteBannerMutation 
+import {
+  useAddBannerMutation,
+  useGetBannersQuery,
+  useDeleteBannerMutation,
 } from "@/redux/features/admin/bannerApi";
 import Swal from "sweetalert2";
 import { Loader2, Plus, X, Trash2, Film } from "lucide-react";
@@ -18,7 +18,8 @@ const AddBanner = () => {
   const [fileType, setFileType] = useState<string>("");
 
   // RTK Query hooks
-  const { data: bannersResponse, isLoading: isFetching } = useGetBannersQuery(undefined);
+  const { data: bannersResponse, isLoading: isFetching } =
+    useGetBannersQuery(undefined);
   const [addBanner, { isLoading: isAdding }] = useAddBannerMutation();
   const [deleteBanner] = useDeleteBannerMutation();
 
@@ -96,7 +97,7 @@ const AddBanner = () => {
   };
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 notranslate">
       {/* --- ADD BANNER FORM --- */}
       <div className=" bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
         <div className="flex items-center gap-3 mb-8">
@@ -104,14 +105,20 @@ const AddBanner = () => {
             <Plus size={24} />
           </div>
           <div>
-            <h2 className="text-xl font-black text-[#1A2E1A]">ADD NEW BANNER</h2>
-            <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Image, JFIF or Video</p>
+            <h2 className="text-xl font-black text-[#1A2E1A]">
+              ADD NEW BANNER
+            </h2>
+            <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">
+              Image, JFIF or Video
+            </p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm font-bold text-gray-600 ml-1">Banner Title*</label>
+            <label className="text-sm font-bold text-gray-600 ml-1">
+              Banner Title*
+            </label>
             <input
               type="text"
               value={title}
@@ -122,7 +129,9 @@ const AddBanner = () => {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-bold text-gray-600 ml-1">Subtitle</label>
+            <label className="text-sm font-bold text-gray-600 ml-1">
+              Subtitle
+            </label>
             <textarea
               value={subtitle}
               onChange={(e) => setSubtitle(e.target.value)}
@@ -134,22 +143,41 @@ const AddBanner = () => {
 
           {/* Upload Area with Video Support */}
           <div className="space-y-2">
-            <label className="text-sm font-bold text-gray-600 ml-1">Media (Image/Video)*</label>
+            <label className="text-sm font-bold text-gray-600 ml-1">
+              Media (Image/Video)*
+            </label>
             {!preview ? (
               <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-200 rounded-3xl bg-[#F8FAF8] cursor-pointer hover:bg-[#F1F5F1] transition-colors group">
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   <Film className="w-10 h-10 text-gray-400 group-hover:scale-110 transition-transform mb-2" />
-                  <p className="text-sm text-gray-500 font-bold">Click to upload</p>
-                  <p className="text-[10px] text-gray-400 uppercase font-bold">Images or MP4 (Max 100MB)</p>
+                  <p className="text-sm text-gray-500 font-bold">
+                    Click to upload
+                  </p>
+                  <p className="text-[10px] text-gray-400 uppercase font-bold">
+                    Images or MP4 (Max 100MB)
+                  </p>
                 </div>
-                <input type="file" className="hidden" accept="image/*,video/*" onChange={handleFileChange} />
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*,video/*"
+                  onChange={handleFileChange}
+                />
               </label>
             ) : (
               <div className="relative w-full h-64 rounded-3xl overflow-hidden border border-gray-100 shadow-inner">
                 {fileType.startsWith("video/") ? (
-                  <video src={preview} controls className="w-full h-full object-cover" />
+                  <video
+                    src={preview}
+                    controls
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
-                  <img src={preview} alt="Preview" className="w-full h-full object-cover" />
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
                 )}
                 <button
                   type="button"
@@ -167,7 +195,11 @@ const AddBanner = () => {
             disabled={isAdding}
             className="w-full bg-[#1F5E3B] hover:bg-[#16432a] text-white rounded-2xl h-14 text-lg font-bold shadow-lg shadow-green-100"
           >
-            {isAdding ? <Loader2 className="animate-spin" /> : "Add Banner Slide"}
+            {isAdding ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              "Add Banner Slide"
+            )}
           </Button>
         </form>
       </div>
@@ -177,23 +209,38 @@ const AddBanner = () => {
       {/* --- BANNER LIST SECTION --- */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-xl font-black text-[#1A2E1A] uppercase tracking-tight">Active Banners</h3>
+          <h3 className="text-xl font-black text-[#1A2E1A] uppercase tracking-tight">
+            Active Banners
+          </h3>
           <span className="bg-[#1F5E3B] text-white text-[10px] font-bold px-3 py-1 rounded-full">
             Total: {banners.length}
           </span>
         </div>
 
         {isFetching ? (
-          <div className="flex justify-center py-10"><Loader2 className="animate-spin text-[#1F5E3B]" /></div>
+          <div className="flex justify-center py-10">
+            <Loader2 className="animate-spin text-[#1F5E3B]" />
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {banners.map((item: any) => (
-              <div key={item._id} className="bg-white rounded-[2.5rem] border border-gray-100 overflow-hidden shadow-sm group">
+              <div
+                key={item._id}
+                className="bg-white rounded-[2.5rem] border border-gray-100 overflow-hidden shadow-sm group"
+              >
                 <div className="h-48 relative overflow-hidden">
                   {item.image.match(/\.(mp4|webm|mov)$/i) ? (
-                    <video src={`${IMG_URL}${item.image}`} className="w-full h-full object-cover" muted />
+                    <video
+                      src={`${IMG_URL}${item.image}`}
+                      className="w-full h-full object-cover"
+                      muted
+                    />
                   ) : (
-                    <img src={`${IMG_URL}${item.image}`} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <img
+                      src={`${IMG_URL}${item.image}`}
+                      alt=""
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
                   )}
                   <button
                     onClick={() => handleDelete(item._id)}
@@ -203,8 +250,12 @@ const AddBanner = () => {
                   </button>
                 </div>
                 <div className="p-6">
-                  <h4 className="font-black text-[#1A2E1A] text-sm uppercase line-clamp-1">{item.title}</h4>
-                  <p className="text-xs text-gray-400 font-medium mt-1 line-clamp-2">{item.subtitle || "No subtitle provided"}</p>
+                  <h4 className="font-black text-[#1A2E1A] text-sm uppercase line-clamp-1">
+                    {item.title}
+                  </h4>
+                  <p className="text-xs text-gray-400 font-medium mt-1 line-clamp-2">
+                    {item.subtitle || "No subtitle provided"}
+                  </p>
                 </div>
               </div>
             ))}

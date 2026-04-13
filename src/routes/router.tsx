@@ -26,11 +26,19 @@ import ShippingPolicy from "@/public_pages/ShippingPolicy/ShippingPolicy";
 import ReturnPolicy from "@/public_pages/ReturnPolicy/ReturnPolicy";
 import TermsPage from "@/public_pages/TermsPage";
 import Contact from "@/public_pages/Contact";
+import { useEffect } from "react";
+function ErrorBoundary() {
+  useEffect(() => {
+    window.location.reload();
+  }, []);
 
+  return null;
+}
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
+    errorElement: <ErrorBoundary />,
     children: [
       {
         index: true,

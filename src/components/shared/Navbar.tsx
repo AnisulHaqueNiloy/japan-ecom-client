@@ -28,39 +28,50 @@ import { useGetCategoriesQuery } from "@/redux/features/admin/category";
 import { useGetMeQuery, useLogoutMutation } from "@/redux/features/authApi";
 import { useSelector } from "react-redux";
 
-// Base URL configuration (Ensure VITE_ prefix if using Vite)
+import LanguageDropdown from "../translation/LanguageDropdown";
+
 const IMG_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 const Navbar = () => {
   const [isCatExpanded, setIsCatExpanded] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // --- Search State ---
+  const [searchTerm, setSearchTerm] = useState("");
+
   const navigate = useNavigate();
 
-  // 1. Auth Status & User Data Fetching
+  // 1. Auth Status & User Data
   const { data: user, isLoading: isUserLoading } = useGetMeQuery(undefined);
-
   const [logout] = useLogoutMutation();
   const isLoggedIn = !!user;
   const isAdmin = user?.role === "ADMIN";
 
-  // Helper function to handle image path
-  const getFullImageUrl = (path: string) => {
-    if (!path) return null;
-    return path.startsWith("http") ? path : `${IMG_URL}${path}`;
-  };
-
-  // 2. Cart Count Calculation
+  // 2. Cart Count
   const cartState = useSelector((state: any) => state.cart);
   const items = cartState?.items || cartState?.cartItems || [];
   const totalCartCount = items.reduce(
     (total: number, item: any) => total + (item.quantity || 1),
-    0
+    0,
   );
 
   // 3. Categories Fetching
-  const { data: categories, isLoading: isCatLoading } = useGetCategoriesQuery(undefined);
+  const { data: categories, isLoading: isCatLoading } =
+    useGetCategoriesQuery(undefined);
 
-  // Handle Logout
+  // --- Search Handler ---
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      // Backend service 'keyword' filter support kore, tai query param e keyword pathachchi
+      navigate(
+        `/all_products?keyword=${encodeURIComponent(searchTerm.trim())}`,
+      );
+      setIsMobileMenuOpen(false);
+      setIsCatExpanded(false);
+    }
+  };
+
   const handleLogout = async () => {
     try {
       await logout(undefined).unwrap();
@@ -77,6 +88,11 @@ const Navbar = () => {
     }
   };
 
+  const getFullImageUrl = (path: string) => {
+    if (!path) return null;
+    return path.startsWith("http") ? path : `${IMG_URL}${path}`;
+  };
+
   useEffect(() => {
     if (isCatExpanded || isMobileMenuOpen) {
       document.body.style.overflow = "hidden";
@@ -87,15 +103,14 @@ const Navbar = () => {
 
   return (
     <nav className="relative w-full border-b bg-white z-[100]">
-      {/* --- Main Desktop Header --- */}
       <div className="mx-auto mr-4 md:mr-14 ml-4 md:ml-14 px-4 h-20 flex items-center justify-between gap-4">
-        {/* Logo Section */}
+        {/* Logo */}
         <Link to="/" className="flex items-center gap-2 shrink-0">
           <div className="w-9 h-9 bg-[#1F5E3B] rounded-lg flex items-center justify-center shadow-sm">
             <span className="text-white text-lg">🕌</span>
           </div>
           <h1 className="text-xl font-black text-[#1A2E1A] tracking-tighter">
-            HALAL <span className="text-[#1F5E3B]">JAPAN</span>
+            MainichiHalal <span className="text-[#1F5E3B]">Shop</span>
           </h1>
         </Link>
 
@@ -117,9 +132,7 @@ const Navbar = () => {
               {[...Array(4)].map((_, i) => (
                 <div
                   key={i}
-                  className={`w-1.5 h-1.5 rounded-sm transition-colors duration-300 ${
-                    isCatExpanded ? "bg-white" : "bg-[#1F5E3B]"
-                  }`}
+                  className={`w-1.5 h-1.5 rounded-sm transition-colors duration-300 ${isCatExpanded ? "bg-white" : "bg-[#1F5E3B]"}`}
                 />
               ))}
             </div>
@@ -129,32 +142,41 @@ const Navbar = () => {
             />
           </Button>
 
-          <div className="relative flex-1 max-w-xl">
+          {/* Desktop Search Form */}
+          <form onSubmit={handleSearch} className="relative flex-1 max-w-xl">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#1F5E3B]" />
             <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Search halal products..."
               className="w-full bg-[#F1F5F1] border-none rounded-full pl-12 h-12 text-[#1F5E3B] focus-visible:ring-2 focus-visible:ring-[#1F5E3B]/20"
             />
-          </div>
+          </form>
         </div>
 
         {/* Right Side Icons */}
         <div className="flex items-center gap-2 md:gap-6">
           <div className="hidden xl:flex items-center gap-6 text-[#4A5568] font-medium mr-4">
             <NavLink
-              className={({ isActive }) => (isActive ? "text-[#1F5E3B] font-bold" : "hover:text-[#1F5E3B]")}
+              className={({ isActive }) =>
+                isActive ? "text-[#1F5E3B] font-bold" : "hover:text-[#1F5E3B]"
+              }
               to="/"
             >
               Home
             </NavLink>
             <NavLink
-              className={({ isActive }) => (isActive ? "text-[#1F5E3B] font-bold" : "hover:text-[#1F5E3B]")}
+              className={({ isActive }) =>
+                isActive ? "text-[#1F5E3B] font-bold" : "hover:text-[#1F5E3B]"
+              }
               to="/all_products"
             >
               Shop All
             </NavLink>
             <NavLink
-              className={({ isActive }) => (isActive ? "text-[#1F5E3B] font-bold" : "hover:text-[#1F5E3B]")}
+              className={({ isActive }) =>
+                isActive ? "text-[#1F5E3B] font-bold" : "hover:text-[#1F5E3B]"
+              }
               to="/contact"
             >
               Contact
@@ -162,6 +184,10 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-3 md:gap-5">
+            <div className="hidden md:block">
+              <LanguageDropdown />
+            </div>
+
             {!isAdmin && (
               <Link to="/cart">
                 <div className="relative cursor-pointer group">
@@ -201,25 +227,26 @@ const Navbar = () => {
                       </span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 mt-2 p-2 rounded-2xl border-gray-100 shadow-xl">
+                  <DropdownMenuContent
+                    align="end"
+                    className="w-56 mt-2 p-2 rounded-2xl border-gray-100 shadow-xl"
+                  >
                     <div className="px-3 py-3">
-                      <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Signed in as</p>
-                      <p className="text-sm font-bold text-[#1A2E1A] truncate">{user.email}</p>
+                      <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">
+                        Signed in as
+                      </p>
+                      <p className="text-sm font-bold text-[#1A2E1A] truncate">
+                        {user.email}
+                      </p>
                     </div>
                     <DropdownMenuSeparator />
-                    
-                    {isAdmin ?(
-                      <DropdownMenuItem
-                        onClick={() => navigate("/admin")}
-                        className="cursor-pointer py-3 rounded-xl gap-3 text-[#1F5E3B]"
-                      >
-                        <Settings size={18} /> Admin Dashboard
-                      </DropdownMenuItem>
-                    ):(
-                      <DropdownMenuItem onClick={() => navigate("/user")} className="cursor-pointer py-3 rounded-xl gap-3">
-                      <User size={18} className="text-gray-400" /> Dashboard
+                    <DropdownMenuItem
+                      onClick={() => navigate(isAdmin ? "/admin" : "/user")}
+                      className="cursor-pointer py-3 rounded-xl gap-3"
+                    >
+                      {isAdmin ? <Settings size={18} /> : <User size={18} />}{" "}
+                      {isAdmin ? "Admin Dashboard" : "Dashboard"}
                     </DropdownMenuItem>
-                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={handleLogout}
@@ -232,7 +259,10 @@ const Navbar = () => {
               ) : (
                 <div className="flex gap-2">
                   <Link to="/login">
-                    <Button variant="ghost" className="rounded-full px-6 font-bold text-[#1F5E3B]">
+                    <Button
+                      variant="ghost"
+                      className="rounded-full px-6 font-bold text-[#1F5E3B]"
+                    >
                       Login
                     </Button>
                   </Link>
@@ -245,7 +275,11 @@ const Navbar = () => {
               )}
             </div>
 
-            <Button variant="ghost" className="md:hidden p-2" onClick={() => setIsMobileMenuOpen(true)}>
+            <Button
+              variant="ghost"
+              className="md:hidden p-2"
+              onClick={() => setIsMobileMenuOpen(true)}
+            >
               <Menu className="w-7 h-7" />
             </Button>
           </div>
@@ -263,7 +297,9 @@ const Navbar = () => {
         >
           <div className="container mx-auto py-12 px-6 max-h-[85vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-10">
-              <h2 className="text-2xl font-bold text-[#1A2E1A] border-l-4 border-[#1F5E3B] pl-4">All Categories</h2>
+              <h2 className="text-2xl font-bold text-[#1A2E1A] border-l-4 border-[#1F5E3B] pl-4">
+                All Categories
+              </h2>
               <Button variant="ghost" onClick={() => setIsCatExpanded(false)}>
                 <X className="mr-2 h-4 w-4" /> Close
               </Button>
@@ -276,7 +312,9 @@ const Navbar = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10">
                 {categories?.map((cat: any) => (
                   <div key={cat._id} className="space-y-4">
-                    <h3 className="text-lg font-black text-[#1A2E1A] border-b pb-2">{cat.name}</h3>
+                    <h3 className="text-lg font-black text-[#1A2E1A] border-b pb-2">
+                      {cat.name}
+                    </h3>
                     <ul className="space-y-2">
                       {cat.subcategories?.map((sub: any) => (
                         <li key={sub._id}>
@@ -310,6 +348,7 @@ const Navbar = () => {
           </Button>
         </div>
         <div className="p-6 space-y-8 overflow-y-auto h-[calc(100vh-80px)]">
+          {/* Mobile User Profile */}
           {isLoggedIn && (
             <div className="flex items-center gap-4 bg-[#F1F5F1] p-4 rounded-2xl">
               <div className="w-12 h-12 bg-[#1F5E3B] rounded-full flex items-center justify-center text-white text-xl font-bold overflow-hidden">
@@ -330,36 +369,43 @@ const Navbar = () => {
             </div>
           )}
 
-          {/* Mobile Search */}
-          <div className="relative">
+          {/* Mobile Search Form */}
+          <form onSubmit={handleSearch} className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#1F5E3B]" />
-            <Input placeholder="Search products..." className="bg-[#F1F5F1] border-none rounded-2xl h-14 pl-12" />
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search products..."
+              className="bg-[#F1F5F1] border-none rounded-2xl h-14 pl-12"
+            />
+          </form>
+
+          <div className="pt-2">
+            <LanguageDropdown />
           </div>
 
           <div className="space-y-4">
-            <NavLink to="/" onClick={() => setIsMobileMenuOpen(false)} className="block text-2xl font-bold">
+            <NavLink
+              to="/"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-2xl font-bold"
+            >
               Home
             </NavLink>
-            <NavLink to="/all_products" onClick={() => setIsMobileMenuOpen(false)} className="block text-2xl font-bold">
+            <NavLink
+              to="/all_products"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-2xl font-bold"
+            >
               Shop All
             </NavLink>
-            {isAdmin ? (
-              <NavLink
-                to="/admin"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block text-2xl font-bold text-[#1F5E3B]"
-              >
-                Admin Panel
-              </NavLink>
-            ) : (
-              <NavLink
-                to="/user"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="block text-2xl font-bold text-[#1F5E3B]"
-              >
-                User Panel
-              </NavLink>
-            )}
+            <NavLink
+              to={isAdmin ? "/admin" : "/user"}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-2xl font-bold text-[#1F5E3B]"
+            >
+              {isAdmin ? "Admin Panel" : "User Panel"}
+            </NavLink>
             {!isAdmin && (
               <NavLink
                 to="/cart"

@@ -66,7 +66,7 @@ const AddCategory = () => {
   };
 
   return (
-    <div className="space-y-8 ">
+    <div className="space-y-8 notranslate">
       {/* Header Area */}
       <div className="flex items-center gap-3">
         <div className="p-3 bg-[#1F5E3B] text-white rounded-2xl shadow-lg shadow-green-100">

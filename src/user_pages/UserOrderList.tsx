@@ -10,11 +10,11 @@ import {
   Truck,
   XCircle,
 } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const UserOrderList = () => {
   const navigate = useNavigate();
-  const { locale } = useParams();
+  // const { locale } = useParams();
   const { data: orderData, isLoading } = useGetMyOrdersQuery(undefined);
 
   const orders = orderData?.data || [];
@@ -104,20 +104,18 @@ const UserOrderList = () => {
                 <div className="space-y-4">
                   {/* Items Preview */}
                   <div className="flex -space-x-3 overflow-hidden">
-                    {order.orderItems
-                      ?.slice(0, 3)
-                      .map((item: any, idx: number) => (
-                        <div
-                          key={item._id}
-                          className="h-12 w-12 rounded-xl border-2 border-white bg-gray-50 overflow-hidden shadow-sm"
-                        >
-                          <img
-                            src={item.product?.image || item.image}
-                            alt=""
-                            className="h-full w-full object-cover"
-                          />
-                        </div>
-                      ))}
+                    {order.orderItems?.slice(0, 3).map((item: any) => (
+                      <div
+                        key={item._id}
+                        className="h-12 w-12 rounded-xl border-2 border-white bg-gray-50 overflow-hidden shadow-sm"
+                      >
+                        <img
+                          src={item.product?.image || item.image}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    ))}
                     {order.orderItems?.length > 3 && (
                       <div className="h-12 w-12 rounded-xl border-2 border-white bg-gray-100 flex items-center justify-center text-[10px] font-black text-gray-500">
                         +{order.orderItems.length - 3}

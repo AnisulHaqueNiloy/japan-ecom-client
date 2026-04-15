@@ -161,10 +161,9 @@ const RollingGallery = () => {
 
   // Real API fetching
   const { data, isLoading, isSuccess } = useGetProductsQuery({ limit: 10 });
-  const products = data?.data || [];
+  // const products = data?.data || [];
+  const products = (data as any)?.data || [];
 
-
-  
   console.log(products);
 
   useEffect(() => {

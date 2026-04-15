@@ -46,7 +46,7 @@ const CartPage = () => {
     0,
   );
   const tax = Math.round(subtotal * 0.08);
-  const shippingFee = cartItems.length > 0 ? 100 : 0;
+  const shippingFee = cartItems.length > 0 ? 1100 : 0;
   const total = subtotal + tax + shippingFee;
 
   const handleCheckout = async (e: React.FormEvent) => {
@@ -101,7 +101,7 @@ const CartPage = () => {
   };
 
   return (
-    <div className="md:mx-14 mx-4 py-12 bg-white min-h-[80vh] font-sans">
+    <div className="notranslate md:mx-14 mx-4 py-12 bg-white min-h-[80vh] font-sans">
       <header className="mb-10 text-center md:text-left">
         <h1 className="text-4xl font-black text-[#1A2E1A] mb-2 uppercase tracking-tight">
           Checkout Bag

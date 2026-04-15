@@ -53,7 +53,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F4F7F4] p-4 font-sans">
+    <div className="notranslate min-h-screen flex items-center justify-center bg-[#F4F7F4] p-4 font-sans">
       <div className="max-w-md w-full bg-white rounded-[2.5rem] shadow-2xl shadow-green-900/5 p-10 border border-gray-100">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-[#1F5E3B]/10 rounded-2xl mb-4 text-[#1F5E3B]">

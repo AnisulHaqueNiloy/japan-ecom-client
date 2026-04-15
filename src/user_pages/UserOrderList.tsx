@@ -86,7 +86,6 @@ const UserOrderList = () => {
           {orders?.map((order: any) => (
             <div
               key={order._id}
-              onClick={() => navigate(`/${locale}/user/orders/${order._id}`)}
               className="bg-white rounded-[2rem] border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between"
             >
               <div>
@@ -109,7 +108,7 @@ const UserOrderList = () => {
                       ?.slice(0, 3)
                       .map((item: any, idx: number) => (
                         <div
-                          key={idx}
+                          key={item._id}
                           className="h-12 w-12 rounded-xl border-2 border-white bg-gray-50 overflow-hidden shadow-sm"
                         >
                           <img
